@@ -1,7 +1,6 @@
 import model
 import data
 import argparse
-import json
 import time
 
 parser = argparse.ArgumentParser(description='image classification: main function')
@@ -103,15 +102,3 @@ elif mode_flag == 'predict':
     end_time = time.time()
     print('finish prediction')
     print('time used to predict: ' + str(end_time-start_time))
-
-    # data = []
-
-#     # TODO: file_list about to create some problems right here
-#     for i in range(0, len(file_list)):
-#         data.append({file_list[i]: int(prediction[i])})
-#
-#     with open(prediction_file, 'w') as json_file:
-#         json.dump(data, json_file)
-#
-# else:
-#     print('unknown mode')
