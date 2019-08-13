@@ -1,7 +1,6 @@
 import model
 import get_file_list
 import data
-import sys
 import argparse
 import json
 import time
