@@ -1,5 +1,4 @@
 import model
-import get_file_list
 import data
 import argparse
 import json
@@ -37,13 +36,16 @@ pca_components = argv.pca_components
 if image_path == '':
     print('get all image files')
     start_time = time.time()
-    [file_list, file_name] = get_file_list.get_system_metadata(folder_path, flag)
+    # TODO: UNcomment
+    # [file_list, file_name] = get_file_list.get_system_metadata(folder_path, flag)
+    file_list = None
     end_time = time.time()
     print('time used to get image files: ' + str(end_time-start_time))
 
 else:
     if mode_flag == 'predict':
         print('get the image')
+        # TODO: This timer is completely pointless???
         start_time = time.time()
         file_list = [image_path]
         end_time = time.time()
@@ -54,7 +56,8 @@ else:
 
 print('get all image data')
 start_time = time.time()
-X, valid_list = data.get_image(file_list, resize_size)
+X, valid_list = data.get_image(file_list, resize_size, data_mode=mode_flag)
+# X, valid_list = "Hey", "young"
 end_time = time.time()
 print('time used to extract image data: ' + str(end_time-start_time))
 # print(X)
@@ -72,6 +75,10 @@ if mode_flag == 'test':
 elif mode_flag == 'train':
     print('get all label data')
     y = data.get_label_data(label_file_path)
+
+    print("X: {}".format(X))
+    print("Y: {}".format(y))
+
     print('start training')
     start_time = time.time()
     model.train(X, y, resize_size, pca_components)
@@ -97,13 +104,14 @@ elif mode_flag == 'predict':
     print('finish prediction')
     print('time used to predict: ' + str(end_time-start_time))
 
-    data = []
+    # data = []
 
-    for i in range(0, len(file_list)):
-        data.append({file_list[i]: int(prediction[i])})
-
-    with open(prediction_file, 'w') as json_file:
-        json.dump(data, json_file)
-
-else:
-    print('unknown mode')
+#     # TODO: file_list about to create some problems right here
+#     for i in range(0, len(file_list)):
+#         data.append({file_list[i]: int(prediction[i])})
+#
+#     with open(prediction_file, 'w') as json_file:
+#         json.dump(data, json_file)
+#
+# else:
+#     print('unknown mode')

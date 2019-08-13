@@ -38,13 +38,11 @@ def test(X, y, resize_size, pca_components):
 
 
 def train(X_train, y_train, resize_size, pca_components):
+
     n_components = pca_components
     pca = PCA(n_components=n_components, svd_solver='randomized', whiten=True).fit(X_train)
 
-    eigenfaces = pca.components_.reshape((n_components, resize_size, resize_size))
-
     X_train_pca = pca.transform(X_train)
-    # print(X_train_pca)
 
     param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],
                   'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1], }
