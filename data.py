@@ -10,14 +10,6 @@ import os
 w, h = 300, 300
 
 
-# def read_file_list(file_name):
-#     with open(file_name) as f:
-#         content = f.readlines()
-#         # you may also want to remove whitespace characters like `\n` at the end of each line
-#         content = [x.strip() for x in content]
-#     return content
-
-
 def get_image(file_list, resize_size, data_mode='predict'):
     X = []
     valid_list = []
@@ -53,14 +45,12 @@ def get_image(file_list, resize_size, data_mode='predict'):
     return X, valid_list
 
 
-def get_label_data(file_name):
+def get_label_data(file_name, image_type_encoding):
     # f = open(file_name)
     # content = f.readlines()
 
     # you may also want to remove whitespace characters like `\n` at the end of each line
     # content = [x.strip()[0] for x in content]
-
-    image_type_encoding = {"graphics": '1', "map_plots": '2', "maps": '3', "photographs": '4', "scientific_plots": '5'}
 
     res = []
     for type_dir in os.listdir("training_data"):
