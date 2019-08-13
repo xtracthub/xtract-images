@@ -1,44 +1,21 @@
-from __future__ import print_function
-
-from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
-
 import pickle
 
 
-def test(X, y, resize_size, pca_components):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.5, random_state=42)
-    n_components = pca_components
-    pca = PCA(n_components=n_components, svd_solver='randomized', whiten=True).fit(X_train)
+def train(X_train, y_train, pca_components=30):
+    """Trains an SVC model based on X_train and y_train.
 
-    # eigenfaces = pca.components_.reshape((n_components, resize_size, resize_size))
+    Parameters:
+    X_train (list): List of numpy arrays representing images.
+    y_train (list): List of labels for X_train.
+    pca_components (int): Dimensions of reduced features.
 
-    X_train_pca = pca.transform(X_train)
-    X_test_pca = pca.transform(X_test)
-    print(X_test_pca[0])
-
-    param_grid = {'C': [1e3, 5e3, 1e4, 5e4, 1e5],
-                'gamma': [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.1],}
-
-    clf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid)
-    clf = clf.fit(X_train_pca, y_train)
-
-    print(clf.best_estimator_)
-
-    y_pred = clf.predict(X_test_pca)
-    count = 0
-    for i in range(len(y_test)):
-        if y_pred[i] == y_test[i]:
-            count += 1
-    print(count/len(y_test))
-    print(y_pred)
-    print(y_test)
-
-
-def train(X_train, y_train, resize_size, pca_components):
-
+    Returns:
+    Saves pca and model as .sav files.
+    """
     n_components = pca_components
     pca = PCA(n_components=n_components, svd_solver='randomized', whiten=True).fit(X_train)
 
@@ -49,36 +26,52 @@ def train(X_train, y_train, resize_size, pca_components):
 
     clf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid)
     clf = clf.fit(X_train_pca, y_train)
+
     pickle.dump(pca, open('pca_model.sav', 'wb'))
     pickle.dump(clf, open('clf_model.sav', 'wb'))
 
 
-def test_predict(X, y):
+def test(X, y):
+    """Predicts on a list of features and returns an accuracy score.
+
+    Parameters:
+    X (list): List of numpy arrays from images to predict on.
+    y (list): List of labels for X.
+
+    Return:
+    Prints out the accuracy, recall, precision score.
+    """
     try:
         pca = pickle.load(open('pca_model.sav', 'rb'))
         clf = pickle.load(open('clf_model.sav', 'rb'))
-    except:
-        print('please first train the model.')
+    except FileNotFoundError:
+        raise FileNotFoundError("Cannot find model classifier file!")
 
     X_test = pca.transform(X)
     y_pred = clf.predict(X_test)
-    count = 0
-    for i in range(len(y)):
-        if y_pred[i] == y[i]:
-            count += 1
-    print(count/len(y))
-    print(y_pred)
+
+    print("Accuracy score: {}".format(accuracy_score(y, y_pred)))
+    print("Recall score: {}".format(recall_score(y, y_pred, average='micro')))
+    print("Precision score: {}".format(precision_score(y, y_pred, average='micro')))
 
 
 def predict(X):
+    """Predicts on a single numpy array from an image.
+
+    Parameter:
+    X (list): List with a single numpy array from an image.
+
+    Return:
+    y_pred (int): Prediction of X that can be mapped to a type from
+    the image_type_encoding dictionary.
+    """
     try:
         pca = pickle.load(open('pca_model.sav', 'rb'))
         clf = pickle.load(open('clf_model.sav', 'rb'))
-
     except FileNotFoundError:
         raise FileNotFoundError("Cannot find model classifier file!")
 
     X_pca = pca.transform(X)
     y_pred = clf.predict(X_pca)
-    print(y_pred)
+
     return y_pred

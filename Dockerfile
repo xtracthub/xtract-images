@@ -8,7 +8,7 @@ RUN mkdir data
 RUN mkdir prediction
 
 ADD requirements.txt /app
-ADD main.py /app
+ADD xtract_images_main.py /app
 ADD data.py /app
 ADD model.py /app
 ADD get_file_list.py /app

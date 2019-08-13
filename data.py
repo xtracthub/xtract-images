@@ -1,63 +1,58 @@
-
-from __future__ import print_function
-
 from PIL import Image
-
 import numpy as np
 import os
 
 
-w, h = 300, 300
+def get_image(file_list, resize_size=300, data_mode='predict'):
+    """Retrieves images in file_list as numpy arrays if data_mode is 'predict',
+    otherwise it returns the training_data set as numpy arrays.
 
+    Parameters:
+    file_list (None or list): List of image paths if data_mode is 'predict', otherwise
+    None.
+    resize_size (int): Dimension to resize images to.
+    data_mode (str): Mode of image sampler ('predict', 'test', 'train').
 
-def get_image(file_list, resize_size, data_mode='predict'):
+    Returns:
+    X (list): List of numpy arrays taken from images.
+    invalid_list (list): List of indices from file_list or training_data that represent
+    images that were not able to be processed.
+    """
     X = []
-    valid_list = []
-    idx = 0
-
-    if data_mode == 'predict':
-        # TODO: This is a lot of repeat code w/ the train section.
-        image = Image.open(file_list[0])  # Because it's only 1 file.
-        image = image.resize((resize_size, resize_size), Image.ANTIALIAS)
-        image = image.convert('L')
-        img_array = list(image.getdata())
-        X.append(np.array(img_array))
-        valid_list.append(idx)
-
-    else:
+    invalid_list = []
+    if not(data_mode == 'predict'):
+        file_list = []
         for type_dir in os.listdir("training_data"):
+            if type_dir[0] is not '.':
+                for filename in os.listdir("training_data/" + type_dir):
+                    file_list.append("training_data/{}/{}".format(type_dir, filename))
 
-            for filename in os.listdir("training_data/" + type_dir):
+    for idx, file in enumerate(file_list):
+        try:
+            image = Image.open(file)
+            image = image.resize((resize_size, resize_size), Image.ANTIALIAS)
+            image = image.convert('L')
+            img_array = list(image.getdata())
+            X.append(np.array(img_array))
+        except:
+            invalid_list.append(idx)
 
-                # TODO: Try/Except the image extractor
-                #try:
-                image = Image.open("training_data/{}/{}".format(type_dir, filename))
-                image = image.resize((resize_size, resize_size), Image.ANTIALIAS)
-                image = image.convert('L')
-                img_array = list(image.getdata())
-                X.append(np.array(img_array))
-                valid_list.append(idx)
-                # except:
-                #     pass
-                idx += 1
-        print("IDX: {}".format(idx))
-        print("X1: {}".format(X))
-    return X, valid_list
+    return X, invalid_list
 
 
-def get_label_data(file_name, image_type_encoding):
-    # f = open(file_name)
-    # content = f.readlines()
+def get_label_data(image_type_encoding):
+    """Returns label data for the training_data set.
 
-    # you may also want to remove whitespace characters like `\n` at the end of each line
-    # content = [x.strip()[0] for x in content]
+    Parameter:
+    image_type_encoding (dictionary): Dictionary mapping image types to integers.
 
+    Return:
+    res (list): List of integers representing the labels for images in the training_data set.
+    """
     res = []
     for type_dir in os.listdir("training_data"):
-
-        for filename in os.listdir("training_data/" + type_dir):
-            res.append(int(image_type_encoding[type_dir]))
-
-
+        if type_dir[0] is not '.':
+            for filename in os.listdir("training_data/" + type_dir):
+                res.append(int(image_type_encoding[type_dir]))
 
     return res
