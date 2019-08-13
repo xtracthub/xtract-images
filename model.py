@@ -27,7 +27,6 @@ def test(X, y, resize_size, pca_components):
 
     print(clf.best_estimator_)
 
-
     y_pred = clf.predict(X_test_pca)
     count = 0
     for i in range(len(y_test)):
@@ -55,13 +54,13 @@ def train(X_train, y_train, resize_size, pca_components):
     pickle.dump(pca, open('pca_model.sav', 'wb'))
     pickle.dump(clf, open('clf_model.sav', 'wb'))
 
+
 def test_predict(X, y):
     try:
         pca = pickle.load(open('pca_model.sav', 'rb'))
         clf = pickle.load(open('clf_model.sav', 'rb'))
     except:
         print('please first train the model.')
-
 
     X_test = pca.transform(X)
     y_pred = clf.predict(X_test)
@@ -77,8 +76,9 @@ def predict(X):
     try:
         pca = pickle.load(open('pca_model.sav', 'rb'))
         clf = pickle.load(open('clf_model.sav', 'rb'))
-    except:
-        print('please first train the model.')
+
+    except FileNotFoundError:
+        raise FileNotFoundError("Cannot find model classifier file!")
 
     X_pca = pca.transform(X)
     y_pred = clf.predict(X_pca)

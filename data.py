@@ -1,3 +1,4 @@
+
 from __future__ import print_function
 
 from PIL import Image
@@ -36,15 +37,15 @@ def get_image(file_list, resize_size):
     return X, valid_list
 
 
-def get_label_data(file_name, data_choosed):
+def get_label_data(file_name):
     f = open(file_name)
     content = f.readlines()
+
     # you may also want to remove whitespace characters like `\n` at the end of each line
     content = [x.strip()[0] for x in content]
     res = []
     for i in range(len(content)):
         if content[i] != '0':
             res.append(int(content[i]))
-    # for i in range(len(data_choosed)):
-    # 	res.append(int(content[data_choosed[i]]))
+
     return res

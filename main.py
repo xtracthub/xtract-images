@@ -62,16 +62,16 @@ print('time used to extract image data: ' + str(end_time-start_time))
 
 if mode_flag == 'test':
     print('get all label data')
-    y = data.get_label_data(label_file_path, valid_list)
+    y = data.get_label_data(label_file_path)
     start_time = time.time()
     model.test(X, y, resize_size, pca_components)
     end_time = time.time()
     print('finish')
     print('time used for test: ' + str(end_time-start_time))
 
-elif mode_flag == 'train' :
+elif mode_flag == 'train':
     print('get all label data')
-    y = data.get_label_data(label_file_path, valid_list)
+    y = data.get_label_data(label_file_path)
     print('start training')
     start_time = time.time()
     model.train(X, y, resize_size, pca_components)
@@ -79,9 +79,9 @@ elif mode_flag == 'train' :
     print('finish train, model in clf and pca')
     print('time used for train: ' + str(end_time-start_time))
 
-elif mode_flag == 'test_predict' :
+elif mode_flag == 'test_predict':
     print('get all label data')
-    y = data.get_label_data(label_file_path, valid_list)
+    y = data.get_label_data(label_file_path)
     print('start test predict')
     start_time = time.time()
     model.test_predict(X, y)
@@ -96,7 +96,7 @@ elif mode_flag == 'predict':
     end_time = time.time()
     print('finish prediction')
     print('time used to predict: ' + str(end_time-start_time))
-    print('save to ' + prediction_file)
+
     data = []
 
     for i in range(0, len(file_list)):
