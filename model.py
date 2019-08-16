@@ -71,7 +71,7 @@ def predict(X):
     except FileNotFoundError:
         raise FileNotFoundError("Cannot find model classifier file!")
 
-    X_pca = pca.transform(X)
+    X_pca = pca.transform(X).reshape(1, -1)
     y_pred = clf.predict(X_pca)
 
     return y_pred
