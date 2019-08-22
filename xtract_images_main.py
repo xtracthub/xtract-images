@@ -54,9 +54,13 @@ def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
             model.train(X, y, pca_components)
             print("Train time: {}".format(time.time() - t0))
         elif mode_flag == 'predict':
+            t0 = time.time()
             prediction = model.predict(X)
-            print(prediction)
-            return prediction
+            img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
+            print(img_type)
+            total_time = time.time() - t0
+            meta = {"image-sort": {"img_type": img_type}, "extract time": total_time}
+            return meta
         elif mode_flag == 'test':
             t0 = time.time()
             model.test(X, y)
@@ -84,12 +88,7 @@ if __name__ == "__main__":
     resize_size = argv.resize_to
     pca_components = argv.pca_components
 
-    t0 = time.time()
-    prediction = extract_image(mode_flag, image_path, resize_size, pca_components)
+    meta = extract_image(mode_flag, image_path, resize_size, pca_components)
 
-    if prediction is not None:
-        img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
-        total_time = time.time() - t0
-        meta = meta = {"image-sort": {"img_type": img_type}, "extract time": total_time}
-        print(meta)
+    print(meta)
 
