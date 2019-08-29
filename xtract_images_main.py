@@ -44,10 +44,7 @@ def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
     prints metrics if mode_flag is 'test'
     """
     if mode_flag in ['predict', 'train', 'test']:
-        t0 = time.time()
         X, y = preprocess_data(mode_flag, image_path, resize_size)
-        print("Extract image data time: {}".format(time.time() - t0))
-
         if mode_flag == 'train':
             print("Training model")
             t0 = time.time()
@@ -57,12 +54,10 @@ def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
             t0 = time.time()
             prediction = model.predict(X)
             img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
-            print(img_type)
             total_time = time.time() - t0
             meta = {"image-sort": {"img_type": img_type}, "extract time": total_time}
             return meta
         elif mode_flag == 'test':
-            t0 = time.time()
             model.test(X, y)
     else:
         print("Invalid mode")
