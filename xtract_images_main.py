@@ -57,7 +57,7 @@ def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
             prediction = model.predict(X)
             img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
             total_time = time.time() - t0
-            meta = {"image-sort": {"img_type": img_type}, "extract time": total_time}
+            meta = {"img_type": img_type, "extract time": total_time}
 
             # Now we get the average RGB of the image
             myimg = cv2.imread(image_path)
