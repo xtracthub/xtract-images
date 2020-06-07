@@ -4,3 +4,4 @@ numpy
 scipy
 argparse
 scikit-learn==0.20.03
+opencv-python

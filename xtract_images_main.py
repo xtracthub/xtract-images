@@ -2,6 +2,8 @@ import model
 import data
 import argparse
 import time
+import numpy as np
+import cv2
 
 image_type_encoding = {"graphics": '1', "map_plots": '2', "maps": '3', "photographs": '4', "scientific_plots": '5'}
 
@@ -56,6 +58,15 @@ def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
             img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
             total_time = time.time() - t0
             meta = {"image-sort": {"img_type": img_type}, "extract time": total_time}
+
+            # Now we get the average RGB of the image
+            myimg = cv2.imread(image_path)
+            avg_color_per_row = np.average(myimg, axis=0)
+            bgr_color = np.average(avg_color_per_row, axis=0)
+            rgb_color = np.flipud(bgr_color)
+
+            meta["colors"] = {"bgr": bgr_color, "rgb": rgb_color}
+
             return meta
         elif mode_flag == 'test':
             model.test(X, y)
