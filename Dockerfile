@@ -2,6 +2,10 @@ FROM python:3.6.10
 
 WORKDIR /app
 
+RUN apt-get update
+RUN apt-get install 'ffmpeg'\
+    'libsm6'\
+    'libxext6'  -y
 
 RUN mkdir model
 RUN mkdir data
