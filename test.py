@@ -141,7 +141,7 @@ def images_extract(event):
     import sys
 
     logging.error("Testing")
-    val = finalize_im_rep('barplot_summary_2.png')
+    val = finalize_im_rep('/Users/tylerskluzacek/Desktop/github_avatar.jpg')
     raise ValueError(val)
 
     #print(finalize_im_rep('age_hist_underlying.png'))

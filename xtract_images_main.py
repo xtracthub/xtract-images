@@ -3,7 +3,10 @@ import data
 import argparse
 import time
 import numpy as np
+
 import cv2
+
+
 
 image_type_encoding = {"graphics": '1', "map_plots": '2', "maps": '3', "photographs": '4', "scientific_plots": '5'}
 
