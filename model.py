@@ -2,6 +2,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
+import numpy as np
 import pickle
 import os
 
@@ -69,11 +70,15 @@ def predict(X):
     """
     dir = os.path.dirname(__file__)
     try:
+        print(f'{dir}/pca_model.sav')
+        print(f'{dir}/clf_model.sav')
+    
         pca = pickle.load(open(f'{dir}/pca_model.sav', 'rb'))
         clf = pickle.load(open(f'{dir}/clf_model.sav', 'rb'))
     except FileNotFoundError:
         raise FileNotFoundError("Cannot find model classifier file!")
 
+    print(type(X))
     X = X.reshape(1, -1)
     X_pca = pca.transform(X)
     y_pred = clf.predict(X_pca)

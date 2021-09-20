@@ -33,7 +33,7 @@ def get_image(file_list, resize_size=300, data_mode='predict'):
             image = image.resize((resize_size, resize_size), Image.ANTIALIAS)
             image = image.convert('L')
             img_array = list(image.getdata())
-            X.append(np.array(img_array))
+            X.append(np.asarray(img_array))
         except:
             print("Unexpected error:", sys.exc_info()[0])
             invalid_list.append(idx)
