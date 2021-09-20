@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 import os
-
+import sys
 
 def get_image(file_list, resize_size=300, data_mode='predict'):
     """Retrieves images in file_list as numpy arrays if data_mode is 'predict',
@@ -23,7 +23,7 @@ def get_image(file_list, resize_size=300, data_mode='predict'):
     if not(data_mode == 'predict'):
         file_list = []
         for type_dir in os.listdir("training_data"):
-            if type_dir[0] is not '.':
+            if type_dir[0] != '.':
                 for filename in os.listdir("training_data/" + type_dir):
                     file_list.append("training_data/{}/{}".format(type_dir, filename))
 
@@ -35,6 +35,7 @@ def get_image(file_list, resize_size=300, data_mode='predict'):
             img_array = list(image.getdata())
             X.append(np.array(img_array))
         except:
+            print("Unexpected error:", sys.exc_info()[0])
             invalid_list.append(idx)
 
     return X, invalid_list
@@ -51,7 +52,7 @@ def get_label_data(image_type_encoding):
     """
     res = []
     for type_dir in os.listdir("training_data"):
-        if type_dir[0] is not '.':
+        if type_dir[0] != '.':
             for filename in os.listdir("training_data/" + type_dir):
                 res.append(int(image_type_encoding[type_dir]))
 
