@@ -40,8 +40,8 @@ def preprocess_data(mode_flag, image_path, resize_size=300, single=True):
             del y[invalid_indice]
 
     if single:
-        return X[0], None
-
+        return X[0], y[0] if y is not None else None
+    return X, y
 
 def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
     """Can train a SVC model on images to classify them or predict images
@@ -70,19 +70,22 @@ def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
             t0 = time.time()
             prediction = model.predict(X)
             print(prediction)
-            # img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
-            # total_time = time.time() - t0
-            # type = 'hat'
-            # meta = {"img_type": type, "extract time": total_time}
+            img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
+            total_time = time.time() - t0
+            meta = {"img_type": img_type, "extract time": total_time}
 
             # Now we get the average RGB of the image
-            # myimg = cv2.imread(image_path)
-            # avg_color_per_row = np.average(myimg, axis=0)
-            # bgr_color = np.average(avg_color_per_row, axis=0)
-            # rgb_color = np.flipud(bgr_color)
+            myimg = cv2.imread(image_path)
+            try:
+                avg_color_per_row = np.average(myimg, axis=0)
+                bgr_color = np.average(avg_color_per_row, axis=0)
+                rgb_color = np.flipud(bgr_color)
+            except:
+                bgr_color = 0
+                rgb_color = 0
 
             # meta["colors"] = {"bgr": 2, "rgb": 3}
-            # meta["colors"] = {"bgr": bgr_color, "rgb": rgb_color}
+            meta["colors"] = {"bgr": bgr_color, "rgb": rgb_color}
 
             return meta
         elif mode_flag == 'test':
