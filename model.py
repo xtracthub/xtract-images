@@ -3,7 +3,7 @@ from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
 import pickle
-
+import os
 
 def train(X_train, y_train, pca_components=30):
     """Trains an SVC model based on X_train and y_train.
@@ -16,6 +16,7 @@ def train(X_train, y_train, pca_components=30):
     Returns:
     Saves pca and model as .sav files.
     """
+    dir = os.path.dirname(__file__)
     n_components = pca_components
     pca = PCA(n_components=n_components, svd_solver='randomized', whiten=True).fit(X_train)
 
@@ -27,8 +28,8 @@ def train(X_train, y_train, pca_components=30):
     clf = GridSearchCV(SVC(kernel='rbf', class_weight='balanced'), param_grid)
     clf = clf.fit(X_train_pca, y_train)
 
-    pickle.dump(pca, open('pca_model.sav', 'wb'))
-    pickle.dump(clf, open('clf_model.sav', 'wb'))
+    pickle.dump(pca, open(f'{dir}/pca_model.sav', 'wb'))
+    pickle.dump(clf, open(f'{dir}/clf_model.sav', 'wb'))
 
 
 def test(X, y):
@@ -41,9 +42,10 @@ def test(X, y):
     Return:
     Prints out the accuracy, recall, precision score.
     """
+    dir = os.path.dirname(__file__)
     try:
-        pca = pickle.load(open('pca_model.sav', 'rb'))
-        clf = pickle.load(open('clf_model.sav', 'rb'))
+        pca = pickle.load(open(f'{dir}/pca_model.sav', 'rb'))
+        clf = pickle.load(open(f'{dir}/clf_model.sav', 'rb'))
     except FileNotFoundError:
         raise FileNotFoundError("Cannot find model classifier file!")
 
@@ -65,13 +67,14 @@ def predict(X):
     y_pred (int): Prediction of X that can be mapped to a type from
     the image_type_encoding dictionary.
     """
+    dir = os.path.dirname(__file__)
     try:
-        pca = pickle.load(open('pca_model.sav', 'rb'))
-        clf = pickle.load(open('clf_model.sav', 'rb'))
+        pca = pickle.load(open(f'{dir}/pca_model.sav', 'rb'))
+        clf = pickle.load(open(f'{dir}/clf_model.sav', 'rb'))
     except FileNotFoundError:
         raise FileNotFoundError("Cannot find model classifier file!")
 
-    X_pca = pca.transform(X).reshape(1, -1)
+    X = X.reshape(1, -1)
+    X_pca = pca.transform(X)
     y_pred = clf.predict(X_pca)
-
     return y_pred
