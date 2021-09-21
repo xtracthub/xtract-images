@@ -62,7 +62,7 @@ def predict(X):
     """Predicts on a single numpy array from an image.
 
     Parameter:
-    X (list): List with a single numpy array from an image.
+    X (np.ndarray): A single numpy array representing an image.
 
     Return:
     y_pred (int): Prediction of X that can be mapped to a type from
@@ -70,9 +70,6 @@ def predict(X):
     """
     dir = os.path.dirname(__file__)
     try:
-        print(f'{dir}/pca_model.sav')
-        print(f'{dir}/clf_model.sav')
-    
         pca = pickle.load(open(f'{dir}/pca_model.sav', 'rb'))
         clf = pickle.load(open(f'{dir}/clf_model.sav', 'rb'))
     except FileNotFoundError:
@@ -81,4 +78,4 @@ def predict(X):
     X = X.reshape(1, -1)
     X_pca = pca.transform(X)
     y_pred = clf.predict(X_pca)
-    return y_pred
+    return y_pred.item()
