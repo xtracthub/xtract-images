@@ -41,7 +41,7 @@ def get_images(filename_list, resize_size=300):
     return Xs
 
 
-def get_modeling_data(usage='training', dir=None, resize_size=300):
+def _get_modeling_data(usage='training', dir=None, resize_size=300):
     """
     """
     if not usage:
@@ -52,13 +52,13 @@ def get_modeling_data(usage='training', dir=None, resize_size=300):
     training_list = []
     for type_dir in os.listdir(dir):
         if type_dir[0] != '.':
-            for filename in os.listdir(f'{usage}_data/{type_dir}'):
-                training_list.append('{usage}_data/{}/{}'.format(type_dir, filename))
+            for filename in os.listdir(f'{dir}/{type_dir}'):
+                training_list.append(f'{dir}/{type_dir}/{filename}')
     training_data = get_images(training_list, resize_size)
     return training_data
 
 
-def get_modeling_label(image_type_encoding, dir=None, usage='training'):
+def _get_labeling_data(image_type_encoding, dir=None, usage='training'):
     """
     """
     if usage not in ['training', 'testing']:
@@ -68,30 +68,34 @@ def get_modeling_label(image_type_encoding, dir=None, usage='training'):
     label_data = []
     for type_dir in os.listdir(dir):
         if type_dir[0] != '.':
-            for _ in os.listdir(f'{usage}_data/{type_dir}'):
+            for _ in os.listdir(f'{dir}/{type_dir}'):
                 label_data.append(int(image_type_encoding[type_dir]))
     return label_data
 
 
 def get_training_data(dir=None, resize_size=300):
-    data = get_modeling_data(usage='training',dir=dir, resize_size=resize_size)
+    data = _get_modeling_data(usage='training',dir=dir, resize_size=resize_size)
     return data
 
 
 def get_testing_data(dir=None, resize_size=300):
-    data = get_modeling_data(usage='testing',dir=dir, resize_size=resize_size)
+    data = _get_modeling_data(usage='testing',dir=dir, resize_size=resize_size)
     return data
 
 
-def get_training_label(image_type_encoding):
+def get_training_label(image_type_encoding, usage='training', dir=None, ):
     """
     """
-    training_label = get_modeling_data('training')
+    if not image_type_encoding:
+        return 'Must include image_type_encoding'
+    training_label = _get_labeling_data(image_type_encoding=image_type_encoding, dir=dir, usage=usage)
     return training_label
 
 
-def get_testing_label(image_type_encoding):
+def get_testing_label(image_type_encoding, usage='testing', dir=None, ):
     """
     """
-    testing_label = get_modeling_data('testing')
-    return testing_label
+    if not image_type_encoding:
+        return 'Must include image_type_encoding'
+    training_label = _get_labeling_data(image_type_encoding=image_type_encoding, dir=dir, usage=usage)
+    return training_label
