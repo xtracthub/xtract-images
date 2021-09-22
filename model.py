@@ -5,6 +5,7 @@ from sklearn.svm import SVC
 import numpy as np
 import pickle
 import os
+import time
 
 def train(X_train, y_train, pca_components=30):
     """Trains an SVC model based on X_train and y_train.
@@ -43,6 +44,9 @@ def test(X, y):
     Return:
     Prints out the accuracy, recall, precision score.
     """
+
+
+    stats = {}
     dir = os.path.dirname(__file__)
     try:
         pca = pickle.load(open(f'{dir}/pca_model.sav', 'rb'))
@@ -53,9 +57,12 @@ def test(X, y):
     X_test = pca.transform(X)
     y_pred = clf.predict(X_test)
 
-    print("Accuracy score: {}".format(accuracy_score(y, y_pred)))
-    print("Recall score: {}".format(recall_score(y, y_pred, average='micro')))
-    print("Precision score: {}".format(precision_score(y, y_pred, average='micro')))
+    stats = dict({
+        'accuracy': accuracy_score(y, y_pred),
+        'recall': recall_score(y, y_pred, average='micro'),
+        'precision': precision_score(y, y_pred, average='micro')
+    })
+    return stats
 
 
 def predict(X):

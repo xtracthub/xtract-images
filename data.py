@@ -3,6 +3,7 @@ import numpy as np
 import os
 import sys
 
+
 def get_image(filename, resize_size=300):
     """Retrieves images in file_list as numpy arrays if data_mode is 'predict',
     otherwise it returns the training_data set as numpy arrays.
@@ -40,30 +41,57 @@ def get_images(filename_list, resize_size=300):
     return Xs
 
 
-def get_training_data(resize_size=300):
+def get_modeling_data(usage='training', dir=None, resize_size=300):
     """
-    
     """
+    if not usage:
+        return 'Must include usage: training or testing'
+    if not dir:
+        dir = f'{os.getcwd()}/{usage}_data/'
+
     training_list = []
-    for type_dir in os.listdir("training_data"):
+    for type_dir in os.listdir(dir):
         if type_dir[0] != '.':
-            for filename in os.listdir("training_data/" + type_dir):
-                training_list.append("training_data/{}/{}".format(type_dir, filename))
+            for filename in os.listdir(f'{usage}_data/{type_dir}'):
+                training_list.append('{usage}_data/{}/{}'.format(type_dir, filename))
     training_data = get_images(training_list, resize_size)
     return training_data
 
-def get_label_data(image_type_encoding):
-    """Returns label data for the training_data set.
 
-    Parameter:
-    image_type_encoding (dictionary): Dictionary mapping image types to integers.
-
-    Return:
-    res (list): List of integers representing the labels for images in the training_data set.
+def get_modeling_label(image_type_encoding, dir=None, usage='training'):
     """
+    """
+    if usage not in ['training', 'testing']:
+        return 'Must include usage: training or testing'
+    if not dir:
+        dir = f'{os.getcwd()}/{usage}_data/'
     label_data = []
-    for type_dir in os.listdir("training_data"):
+    for type_dir in os.listdir(dir):
         if type_dir[0] != '.':
-            for _ in os.listdir("training_data/" + type_dir):
+            for _ in os.listdir(f'{usage}_data/{type_dir}'):
                 label_data.append(int(image_type_encoding[type_dir]))
     return label_data
+
+
+def get_training_data(dir=None, resize_size=300):
+    data = get_modeling_data(usage='training',dir=dir, resize_size=resize_size)
+    return data
+
+
+def get_testing_data(dir=None, resize_size=300):
+    data = get_modeling_data(usage='testing',dir=dir, resize_size=resize_size)
+    return data
+
+
+def get_training_label(image_type_encoding):
+    """
+    """
+    training_label = get_modeling_data('training')
+    return training_label
+
+
+def get_testing_label(image_type_encoding):
+    """
+    """
+    testing_label = get_modeling_data('testing')
+    return testing_label
