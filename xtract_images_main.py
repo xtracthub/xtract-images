@@ -52,30 +52,29 @@ def test_model(dir=None, resize_size=300, image_type_encoding=image_type_encodin
     stats = model.test(X, y)
     return stats
 
-def execute_extractor(filename, mode_flag='predict'):
+def execute_extractor(filepath=None, mode_flag='predict'):
     """
     """
     if mode_flag not in ['predict', 'train', 'test']:
         print('Invalid Mode')
         return None
-    if not filename:
-        print('Filename Invalid')
+    if not filepath and mode_flag not in ['train', 'test']:
+        print('Filename Invalid with provided mode.')
         return None
 
     if mode_flag == 'predict':
         t0 = time.time()
-        metadata = classify_image(image_path=filename)
+        metadata = classify_image(image_path=filepath)
         t1 = time.time()
     elif mode_flag == 'train':
         t0 = time.time()
-        metadata = train_model(image_path=filename)
+        metadata = train_model(dir=filepath)
         t1 = time.time()
     elif mode_flag == 'test':
         t0 = time.time()
-        metadata = test_model(image_path=filename)
+        metadata = test_model(dir=filepath, image_type_encoding=image_type_encoding)
         t1 = time.time()
-    metadata["extract time"] = t1 - t0
-    print('extract time' in metadata)
+    metadata.update({'extract time': t1-t0})
     return metadata
 
 
