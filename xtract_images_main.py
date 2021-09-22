@@ -64,18 +64,18 @@ def execute_extractor(filepath=None, mode_flag='predict'):
 
     if mode_flag == 'predict':
         t0 = time.time()
-        metadata = classify_image(image_path=filepath)
+        meta = classify_image(image_path=filepath)
         t1 = time.time()
     elif mode_flag == 'train':
         t0 = time.time()
-        metadata = train_model(dir=filepath)
+        meta = train_model(dir=filepath)
         t1 = time.time()
     elif mode_flag == 'test':
         t0 = time.time()
-        metadata = test_model(dir=filepath, image_type_encoding=image_type_encoding)
+        meta = test_model(dir=filepath, image_type_encoding=image_type_encoding)
         t1 = time.time()
-    metadata.update({'extract time': t1-t0})
-    return metadata
+    meta.update({'extract time': t1-t0})
+    return meta
 
 
 if __name__ == "__main__":
