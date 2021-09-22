@@ -44,8 +44,6 @@ def test(X, y):
     Return:
     Prints out the accuracy, recall, precision score.
     """
-
-
     stats = {}
     dir = os.path.dirname(__file__)
     try:
