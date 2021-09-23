@@ -2,8 +2,10 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.decomposition import PCA
 from sklearn.svm import SVC
+import numpy as np
 import pickle
 import os
+import time
 
 def train(X_train, y_train, pca_components=30):
     """Trains an SVC model based on X_train and y_train.
@@ -42,6 +44,7 @@ def test(X, y):
     Return:
     Prints out the accuracy, recall, precision score.
     """
+    stats = {}
     dir = os.path.dirname(__file__)
     try:
         pca = pickle.load(open(f'{dir}/pca_model.sav', 'rb'))
@@ -52,16 +55,19 @@ def test(X, y):
     X_test = pca.transform(X)
     y_pred = clf.predict(X_test)
 
-    print("Accuracy score: {}".format(accuracy_score(y, y_pred)))
-    print("Recall score: {}".format(recall_score(y, y_pred, average='micro')))
-    print("Precision score: {}".format(precision_score(y, y_pred, average='micro')))
+    stats = dict({
+        'accuracy': accuracy_score(y, y_pred),
+        'recall': recall_score(y, y_pred, average='micro'),
+        'precision': precision_score(y, y_pred, average='micro')
+    })
+    return stats
 
 
 def predict(X):
     """Predicts on a single numpy array from an image.
 
     Parameter:
-    X (list): List with a single numpy array from an image.
+    X (np.ndarray): A single numpy array representing an image.
 
     Return:
     y_pred (int): Prediction of X that can be mapped to a type from
@@ -77,4 +83,4 @@ def predict(X):
     X = X.reshape(1, -1)
     X_pca = pca.transform(X)
     y_pred = clf.predict(X_pca)
-    return y_pred
+    return y_pred.item()

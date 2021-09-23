@@ -3,78 +3,79 @@ import data
 import argparse
 import time
 import numpy as np
-
 import cv2
-
 
 
 image_type_encoding = {"graphics": '1', "map_plots": '2', "maps": '3', "photographs": '4', "scientific_plots": '5'}
 
 
-def preprocess_data(mode_flag, image_path, resize_size=300):
-    """Resizes and extracts numpy arrays for all images.
-
-    Parameters:
-    mode_flag (str): Mode of image sampler ('predict', 'test', 'train', 'test_predict').
-    image_path (str): File path of image to predict on if mode_flag is 'predict'.
-    resize_size (int): Dimension to resize images to.
-
-    Return:
-    X (list): List of numpy arrays extracted from resized images.
-    y (list or None): List of image labels for X, returns None if mode_flag is predict.
+def classify_image(image_path, resize_size=300, pca_components=30):
     """
-    file_list = [image_path if mode_flag == 'predict' else None]
-    y = data.get_label_data(image_type_encoding) if mode_flag is not 'predict' else None
-    X, invalid_list = data.get_image(file_list, resize_size, mode_flag)
-
-    if y is not None:
-        for invalid_indice in sorted(invalid_list, reverse=True):
-            del y[invalid_indice]
-
-    return X, y
-
-
-def extract_image(mode_flag, image_path, resize_size=300, pca_components=30):
-    """Can train a SVC model on images to classify them or predict images
-    using a pre-trained model.
-
-    Parameters:
-    mode_flag (str): Mode ('predict', 'train', 'test').
-    image_path (str): Filepath for image to predict on if mode_flag is 'predict'.
-    resize_size (int): Dimension to resize images to.
-    pca_components (int): Dimension of reduced features.
-
-    Returns:
-    Returns a prediction if mode_flag is 'predict', saves a model if mode_flag is 'train',
-    prints metrics if mode_flag is 'test'
+    
     """
-    if mode_flag in ['predict', 'train', 'test']:
-        X, y = preprocess_data(mode_flag, image_path, resize_size)
-        if mode_flag == 'train':
-            print("Training model")
-            t0 = time.time()
-            model.train(X, y, pca_components)
-            print("Train time: {}".format(time.time() - t0))
-        elif mode_flag == 'predict':
-            t0 = time.time()
-            prediction = model.predict(X)
-            img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
-            total_time = time.time() - t0
-            meta = {"img_type": img_type, "extract time": total_time}
+    X = data.get_image(image_path, resize_size)
+    t0 = time.time()
+    prediction = model.predict(X)
+    print(prediction)
+    img_type = next(key for key, value in image_type_encoding.items() if value == str(prediction[0]))
+    total_time = time.time() - t0
+    meta = {"img_type": img_type, "extract time": total_time}
+    myimg = cv2.imread(image_path)
+    try:
+        avg_color_per_row = np.average(myimg, axis=0)
+        bgr_color = np.average(avg_color_per_row, axis=0)
+        rgb_color = np.flipud(bgr_color)
+    except:
+        bgr_color = 0
+        rgb_color = 0
+        meta["colors"] = {"bgr": bgr_color, "rgb": rgb_color}
+        return meta
 
-            # Now we get the average RGB of the image
-            myimg = cv2.imread(image_path)
-            avg_color_per_row = np.average(myimg, axis=0)
-            bgr_color = np.average(avg_color_per_row, axis=0)
-            rgb_color = np.flipud(bgr_color)
 
-            meta["colors"] = {"bgr": bgr_color, "rgb": rgb_color}
+def train_model(dir=None, resize_size=300, pca_components=30):
+    """
 
-            return meta
-        elif mode_flag == 'test':
-            model.test(X, y)
-    else:
-        print("Invalid mode")
+    """
+    meta = {}
+    X = data.get_training_data(dir=dir, resize_size=resize_size)
+    y = data.get_training_label(dir=dir, image_type_encoding=image_type_encoding)
+    model.train(X_train=X, y_train=y, pca_components=pca_components)
+    return meta
+
+
+def test_model(dir=None, resize_size=300, image_type_encoding=image_type_encoding):
+    """
+
+    """
+    X = data.get_testing_data(dir=dir, resize_size=resize_size)
+    y = data.get_testing_label(dir=dir, image_type_encoding=image_type_encoding)
+    stats = model.test(X, y)
+    return stats
+
+def execute_extractor(filepath=None, mode_flag='predict'):
+    """
+    """
+    if mode_flag not in ['predict', 'train', 'test']:
+        print('Invalid Mode')
+        return None
+    if not filepath and mode_flag not in ['train', 'test']:
+        print('Filename Invalid with provided mode.')
+        return None
+
+    if mode_flag == 'predict':
+        t0 = time.time()
+        meta = classify_image(image_path=filepath)
+        t1 = time.time()
+    elif mode_flag == 'train':
+        t0 = time.time()
+        meta = train_model(dir=filepath)
+        t1 = time.time()
+    elif mode_flag == 'test':
+        t0 = time.time()
+        meta = test_model(dir=filepath, image_type_encoding=image_type_encoding)
+        t1 = time.time()
+    meta.update({'extract time': t1-t0})
+    return meta
 
 
 if __name__ == "__main__":
@@ -98,6 +99,4 @@ if __name__ == "__main__":
     pca_components = argv.pca_components
 
     meta = extract_image(mode_flag, image_path, resize_size, pca_components)
-
     print(meta)
-
