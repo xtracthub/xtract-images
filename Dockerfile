@@ -25,15 +25,15 @@ RUN git clone https://github.com/xtracthub/xtracthub-service.git \
     && cp xtracthub-service/exceptions.py /
 
 
-RUN git clone -b xtract-theta https://github.com/funcx-faas/funcx.git
-RUN cd funcx && pip install funcx_sdk/ funcx_endpoint/ && cd ..
+# RUN git clone -b xtract-theta https://github.com/funcx-faas/funcx.git
+# RUN cd funcx && pip install funcx_sdk/ funcx_endpoint/ && cd ..
 
 ENV container_version=0
-RUN pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+# RUN pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
 RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
-RUN pip install --no-cache parsl==0.9.0
+# RUN pip install --no-cache parsl==0.9.0
 RUN pip install xtract-sdk==0.0.5
 RUN pip install --upgrade pip
 RUN pip install tensorflow==2.1

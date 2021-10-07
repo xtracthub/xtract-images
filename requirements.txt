@@ -3,5 +3,8 @@ Pillow
 numpy
 scipy
 argparse
-scikit-learn==0.20.03
+scikit-learn==0.21.2
 opencv-python
+xtract_sdk==0.0.7a2
+funcx
+funcx_endpoint
