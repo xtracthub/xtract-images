@@ -66,8 +66,8 @@ def predict(X):
     the image_type_encoding dictionary.
     """
     try:
-        pca = pickle.load(open('pca_model.sav', 'rb'))
-        clf = pickle.load(open('clf_model.sav', 'rb'))
+        pca = pickle.load(open('/app/model/pca_model.sav', 'rb'))
+        clf = pickle.load(open('/app/model/clf_model.sav', 'rb'))
     except FileNotFoundError:
         raise FileNotFoundError("Cannot find model classifier file!")
 

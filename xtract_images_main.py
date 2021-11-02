@@ -11,6 +11,12 @@ import cv2
 image_type_encoding = {"graphics": '1', "map_plots": '2', "maps": '3', "photographs": '4', "scientific_plots": '5'}
 
 
+def execute_extractor(filename):
+    mdata = extract_image(mode_flag='predict', image_path=filename)
+    return mdata
+
+
+
 def preprocess_data(mode_flag, image_path, resize_size=300):
     """Resizes and extracts numpy arrays for all images.
 
