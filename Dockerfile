@@ -33,6 +33,7 @@ RUN pip3 install --trusted-host pypi.python.org -r /requirements.txt
 
 ADD test.py /
 ADD xtract_images_main.py /
+ENV CONTAINER_VERSION=1.0
 
 RUN apt-get update && apt-get install -y libgl1-mesa-dev
 WORKDIR / 
