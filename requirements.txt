@@ -5,6 +5,6 @@ scipy
 argparse
 scikit-learn==0.21.2
 opencv-python
-xtract_sdk==0.0.7a2
+xtract_sdk==0.0.7a11
 funcx
 funcx_endpoint
