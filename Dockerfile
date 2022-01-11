@@ -29,11 +29,14 @@ RUN git clone https://github.com/xtracthub/xtracthub-service.git \
 
 ENV container_version=0
 
-RUN pip3 install --trusted-host pypi.python.org -r /requirements.txt
+RUN pip install --trusted-host pypi.python.org -r /requirements.txt
 
 ADD test.py /
 ADD xtract_images_main.py /
 ENV CONTAINER_VERSION=1.0
+
+
+RUN pip uninstall globus_sdk -y && pip install globus_sdk==2.0.3
 
 RUN apt-get update && apt-get install -y libgl1-mesa-dev
 WORKDIR / 
